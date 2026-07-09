@@ -1,14 +1,13 @@
 /* =========================================================================
    పోతన తెలుగు భాగవతము — app.js
    ========================================================================= */
-//https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?sheetid=1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs&sheetname=Sheet1
 
 /* -------------------------------------------------------------------------
    CONFIG — EDIT THESE THREE VALUES to point at your published Apps Script
    ------------------------------------------------------------------------- */
 const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec',
-  SHEET_ID: '1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID/exec',
+  SHEET_ID: 'PASTE_YOUR_GOOGLE_SHEET_ID',
   SHEET_NAME: 'Sheet1',              // the tab name inside the sheet
   SYNC_INTERVAL_DAYS: 7,             // auto re-sync if cached data is older than this
 };
@@ -22,7 +21,8 @@ const state = {
   totalCount: 0,
   currentId: 1,
   skandaIndex: [],   // [{num, text, firstId, ghattas:[{num, text, firstId}]}]
-  expanded: true,    // global: whether meaning (టీక) + bhavam are shown on every card
+  showMeaning: true, // global: whether టీక is shown on every card
+  showBhavam: true,  // global: whether భావం is shown on every card
 };
 
 /* -------------------------------------------------------------------------
@@ -190,6 +190,10 @@ const drawer = document.getElementById('drawer');
 const skandaListEl = document.getElementById('skandaList');
 const syncBtn = document.getElementById('syncBtn');
 const syncStatus = document.getElementById('syncStatus');
+const toggleMeaningBtn = document.getElementById('toggleMeaningBtn');
+const toggleBhavamBtn = document.getElementById('toggleBhavamBtn');
+const meaningState = document.getElementById('meaningState');
+const bhavamState = document.getElementById('bhavamState');
 const clearBookmarkBtn = document.getElementById('clearBookmarkBtn');
 const confirmBackdrop = document.getElementById('confirmBackdrop');
 const cancelClear = document.getElementById('cancelClear');
@@ -219,16 +223,16 @@ function escapeHtml(str) {
 
 function buildCardHTML(rec) {
   const chandassuTag = rec.chandassu ? ` <span class="chandassu">(${escapeHtml(rec.chandassu)})</span>` : '';
-  const meaningBlocks = state.expanded ? `
+  const meaningBlock = state.showMeaning ? `
       <div class="field field-meaning">
         <div class="field-label">టీక</div>
         <div class="field-text">${escapeHtml(rec.teeka)}</div>
-      </div>
+      </div>` : '';
+  const bhavamBlock = state.showBhavam ? `
       <div class="field field-bhavam">
         <div class="field-label">భావం</div>
         <div class="field-text">${escapeHtml(rec.tippani)}</div>
       </div>` : '';
-  const toggleLabel = state.expanded ? 'టీక, భావం దాచు ▲' : 'టీక, భావం చూపు ▼';
   const prevDisabled = rec.id <= 1 ? 'disabled' : '';
   const nextDisabled = rec.id >= state.totalCount ? 'disabled' : '';
 
@@ -241,14 +245,11 @@ function buildCardHTML(rec) {
       <span class="sep">•</span>
       <span>${escapeHtml(rec.padyaSankhya)}</span>
     </div>
-    <div class="expand-toggle-row">
-      <button class="expand-toggle" onclick="toggleExpand()">${toggleLabel}</button>
-    </div>
     <div class="card-body">
       <div class="field field-padyam">
         <div class="field-label">పద్యం${chandassuTag}</div>
         <div class="field-text">${escapeHtml(rec.padyamText)}</div>
-      </div>${meaningBlocks}
+      </div>${meaningBlock}${bhavamBlock}
     </div>
     <div class="card-footer">
       <button class="nav-btn prev-btn" onclick="goPrev()" ${prevDisabled}>◀ వెనుకకు</button>
@@ -488,13 +489,24 @@ window.goNext = function () {
 window.goPrev = function () {
   if (state.currentId > 1) jumpTo(state.currentId - 1);
 };
-window.toggleExpand = function () {
-  state.expanded = !state.expanded;
-  if (state.db) dbSetMeta(state.db, 'expandState', state.expanded).catch(() => {});
-  // Refresh the visible card in place; the neighbor card (if any) is rebuilt
-  // fresh from state.expanded next time it's prepared, so no extra work needed.
+window.toggleMeaning = function () {
+  state.showMeaning = !state.showMeaning;
+  if (state.db) dbSetMeta(state.db, 'showMeaning', state.showMeaning).catch(() => {});
   activeEl.innerHTML = buildCardHTML(state.records[state.currentId - 1]);
+  updateToggleButtonsUI();
 };
+window.toggleBhavam = function () {
+  state.showBhavam = !state.showBhavam;
+  if (state.db) dbSetMeta(state.db, 'showBhavam', state.showBhavam).catch(() => {});
+  activeEl.innerHTML = buildCardHTML(state.records[state.currentId - 1]);
+  updateToggleButtonsUI();
+};
+function updateToggleButtonsUI() {
+  meaningState.textContent = state.showMeaning ? 'చూపిస్తోంది' : 'దాచింది';
+  meaningState.classList.toggle('on', state.showMeaning);
+  bhavamState.textContent = state.showBhavam ? 'చూపిస్తోంది' : 'దాచింది';
+  bhavamState.classList.toggle('on', state.showBhavam);
+}
 
 /* -------------------------------------------------------------------------
    BOOKMARK
@@ -585,6 +597,8 @@ function closeDrawer() {
 }
 menuBtn.addEventListener('click', openDrawer);
 overlay.addEventListener('click', closeDrawer);
+toggleMeaningBtn.addEventListener('click', () => window.toggleMeaning());
+toggleBhavamBtn.addEventListener('click', () => window.toggleBhavam());
 
 /* -------------------------------------------------------------------------
    ABOUT MODAL
@@ -687,8 +701,11 @@ async function init() {
     buildSkandaIndex();
     renderDrawer();
 
-    const savedExpandState = await dbGetMeta(state.db, 'expandState');
-    if (typeof savedExpandState === 'boolean') state.expanded = savedExpandState;
+    const savedShowMeaning = await dbGetMeta(state.db, 'showMeaning');
+    if (typeof savedShowMeaning === 'boolean') state.showMeaning = savedShowMeaning;
+    const savedShowBhavam = await dbGetMeta(state.db, 'showBhavam');
+    if (typeof savedShowBhavam === 'boolean') state.showBhavam = savedShowBhavam;
+    updateToggleButtonsUI();
 
     setupCardElements();
     const bookmark = await dbGetMeta(state.db, 'bookmarkId');
