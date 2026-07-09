@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>శ్రీ విజయ వనమలమ్మ అమ్మవారి దేవస్థానం</title>
+<meta name="description" content="Sri Vijaya Vanamalamma Ammavari Devasthanam, Machilipatnam - Darshan timings, seva fees, festivals and more.">
+<meta name="theme-color" content="#6E1423">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Telugu:ital@0;1&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">ప్రధాన విషయానికి వెళ్ళండి</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-top">
+    <div class="header-brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 512 512" class="brand-icon"><use href="#gopuramIcon"></use></svg>
+      </span>
+      <div class="brand-text">
+        <p class="brand-name" id="brandShortName">వనమలమ్మ అమ్మవారు</p>
+        <p class="brand-place" id="brandPlace">మచిలీపట్నం</p>
+      </div>
+    </div>
+    <button class="icon-btn" id="callBtn" aria-label="Call temple">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1v3.4c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1.1L6.6 10.8z"/></svg>
+    </button>
+  </div>
+  <nav class="header-nav" id="headerNav" aria-label="Section navigation">
+    <a href="#hero" class="nav-link active">హోమ్</a>
+    <a href="#about" class="nav-link">స్థల పురాణం</a>
+    <a href="#timings" class="nav-link">దర్శన సమయాలు</a>
+    <a href="#sevas" class="nav-link">సేవలు</a>
+    <a href="#festivals" class="nav-link">ఉత్సవాలు</a>
+    <a href="#gallery" class="nav-link">గ్యాలరీ</a>
+    <a href="#devotees" class="nav-link">భక్తుల అనుభవాలు</a>
+    <a href="#location" class="nav-link">ప్రదేశం</a>
+  </nav>
+  <div class="gopuram-edge" aria-hidden="true"></div>
+</header>
+
+<div class="update-toast" id="updateToast" role="status" aria-live="polite">
+  <span id="updateToastText">తాజా సమాచారం నవీకరించబడింది</span>
+</div>
+
+<main id="main">
+
+  <section id="hero" class="hero">
+    <div class="hero-banner" id="heroBanner">
+      <div class="hero-banner-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">స్వయంభూ అమ్మవారు</p>
+      <h1 class="hero-title" id="templeName">శ్రీ విజయ వనమలమ్మ అమ్మవారి దేవస్థానం</h1>
+      <p class="hero-address" id="templeAddress">📍 మచిలీపట్నం</p>
+      <div class="hero-actions">
+        <a href="#location" class="btn btn-gold">దిశలు చూడండి</a>
+        <a href="#" id="heroCallLink" class="btn btn-outline">☎ కాల్ చేయండి</a>
+      </div>
+    </div>
+    <div class="offline-badge" id="offlineBadge" hidden>ఆఫ్‌లైన్ డేటా చూపిస్తోంది</div>
+  </section>
+
+  <section id="about" class="section">
+    <h2 class="section-title"><span class="kalasha-dot"></span>స్థల పురాణం</h2>
+    <p class="about-text" id="aboutText"></p>
+    <div class="puranam-list" id="puranamList"></div>
+  </section>
+
+  <section id="timings" class="section section-alt">
+    <h2 class="section-title"><span class="kalasha-dot"></span>దర్శన సమయాలు</h2>
+    <div class="timings-table-wrap">
+      <table class="timings-table" id="timingsTable">
+        <thead>
+          <tr><th>వారం రోజు</th><th>ఉదయం</th><th>సాయంత్రం</th></tr>
+        </thead>
+        <tbody id="timingsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="sevas" class="section">
+    <h2 class="section-title"><span class="kalasha-dot"></span>సేవలు &amp; రుసుములు</h2>
+    <div class="seva-grid" id="sevaGrid"></div>
+  </section>
+
+  <section id="festivals" class="section section-alt">
+    <h2 class="section-title"><span class="kalasha-dot"></span>ఉత్సవాలు &amp; ప్రకటనలు</h2>
+    <div class="timeline" id="festivalsTimeline"></div>
+    <p class="empty-note" id="festivalsEmpty" hidden>రాబోయే ఉత్సవాలు లేవు</p>
+  </section>
+
+  <section id="gallery" class="section">
+    <h2 class="section-title"><span class="kalasha-dot"></span>గ్యాలరీ</h2>
+    <div class="gallery-groups" id="galleryGroups"></div>
+  </section>
+
+  <section id="devotees" class="section section-alt">
+    <h2 class="section-title"><span class="kalasha-dot"></span>భక్తుల అనుభవాలు</h2>
+    <div class="experience-scroller" id="experienceScroller"></div>
+
+    <h3 class="subsection-title">దాతల జాబితా</h3>
+    <div class="donor-list" id="donorList"></div>
+  </section>
+
+  <section id="location" class="section">
+    <h2 class="section-title"><span class="kalasha-dot"></span>ప్రదేశం</h2>
+    <div class="map-wrap">
+      <iframe id="mapFrame" title="Temple location map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    </div>
+  </section>
+
+</main>
+
+<footer class="contact-footer" id="contact">
+  <div class="contact-grid">
+    <div class="contact-block">
+      <h3>సంప్రదించండి</h3>
+      <p id="contactAddress">📍 —</p>
+      <p><a id="contactPhone" href="#">☎ —</a></p>
+      <p><a id="contactEmail" href="#">✉ —</a></p>
+      <p><a id="contactWebsite" href="#" target="_blank" rel="noopener">🌐 —</a></p>
+    </div>
+    <div class="contact-block social-block" id="socialBlock">
+      <h3>మమ్మల్ని అనుసరించండి</h3>
+      <div class="social-links" id="socialLinks"></div>
+    </div>
+  </div>
+  <p class="copyright">© <span id="footerYear"></span> శ్రీ విజయ వనమలమ్మ అమ్మవారి దేవస్థానం</p>
+</footer>
+
+<nav class="bottom-nav" aria-label="Quick navigation">
+  <a href="#hero" class="bottom-nav-link active" data-target="hero">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3l9 8h-2v9h-5v-6H10v6H5v-9H3l9-8z"/></svg>
+    <span>హోమ్</span>
+  </a>
+  <a href="#sevas" class="bottom-nav-link" data-target="sevas">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2l2.4 5.5L20 8l-4.5 3.9L16.9 18 12 14.8 7.1 18l1.4-6.1L4 8l5.6-.5z"/></svg>
+    <span>సేవలు</span>
+  </a>
+  <a href="#gallery" class="bottom-nav-link" data-target="gallery">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 5h16v14H4V5zm2 2v10h12V7H6zm2 8l3-3.5 2 2.5 3-4 3 5H8z"/></svg>
+    <span>గ్యాలరీ</span>
+  </a>
+  <a href="#contact" class="bottom-nav-link" data-target="contact">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1v3.4c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.3 1.1L6.6 10.8z"/></svg>
+    <span>సంప్రదింపు</span>
+  </a>
+</nav>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="gopuramIcon">
+      <circle cx="256" cy="96" r="16"/>
+      <rect x="248" y="112" width="16" height="28"/>
+      <polygon points="256,140 300,190 212,190"/>
+      <polygon points="228,190 284,190 300,230 212,230"/>
+      <polygon points="200,230 312,230 336,278 176,278"/>
+      <rect x="196" y="278" width="120" height="150" rx="6"/>
+      <rect x="228" y="330" width="56" height="98"/>
+    </g>
+  </defs>
+</svg>
+
+<script src="app.js"></script>
+</body>
+</html>

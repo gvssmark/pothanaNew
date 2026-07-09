@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>పోతన తెలుగు భాగవతము</title>
+<meta name="theme-color" content="#5B1A18" />
+<meta name="description" content="పోతన తెలుగు భాగవతము - పద్యాలు, తాత్పర్యం, భావం" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <button class="icon-btn" id="menuBtn" aria-label="మెనూ తెరవండి">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+  </button>
+  <div>
+    <div class="app-title">పోతన తెలుగు భాగవతము</div>
+    <span class="app-subtitle" id="progressLabel">&nbsp;</span>
+  </div>
+  <button class="icon-btn" id="bookmarkBtn" aria-label="ఇక్కడ గుర్తు పెట్టు">
+    <svg id="bookmarkIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>
+  </button>
+</header>
+
+<main class="stage" id="stage">
+  <div class="edge-fade-top"></div>
+  <div class="edge-fade-bottom"></div>
+
+  <div class="center-state" id="loadingState">
+    <div class="spinner"></div>
+    <h2>డేటా లోడ్ అవుతోంది…</h2>
+    <p>మొదటిసారి తెరిచినప్పుడు గూగుల్ షీట్ నుండి భాగవతము మొత్తం డౌన్‌లోడ్ చేయబడుతుంది. కొద్ది క్షణాలు వేచి ఉండండి.</p>
+  </div>
+
+  <div class="center-state" id="errorState" style="display:none;">
+    <h2>డేటా లభించలేదు</h2>
+    <p id="errorMsg">ఇంటర్నెట్ కనెక్షన్ లేదు, లేదా షీట్ నుండి డేటా తీసుకురాలేకపోయాము.</p>
+    <button id="retryBtn">మళ్ళీ ప్రయత్నించండి</button>
+  </div>
+
+  <!-- Cards are injected here by app.js -->
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<nav class="drawer" id="drawer" aria-label="స్కంధములు మరియు ఘట్టములు">
+  <div class="drawer-header">స్కంధములు</div>
+  <div class="drawer-body" id="skandaList"><!-- built by JS --></div>
+  <div class="drawer-footer">
+    <button class="menu-action" id="syncBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      డేటా సమకాలీకరించు
+    </button>
+    <button class="menu-action danger" id="clearBookmarkBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/><line x1="4" y1="4" x2="20" y2="20"/></svg>
+      గుర్తు తొలగించు
+    </button>
+    <div class="sync-status" id="syncStatus"></div>
+  </div>
+</nav>
+
+<div class="confirm-backdrop" id="confirmBackdrop">
+  <div class="confirm-box">
+    <h3>గుర్తు తొలగించాలా?</h3>
+    <p>మీరు చదివిన స్థానం గుర్తు తొలగించబడుతుంది. తదుపరిసారి యాప్ తెరిచినప్పుడు మొదటి పద్యం నుండి ప్రారంభమవుతుంది.</p>
+    <div class="confirm-actions">
+      <button class="cancel" id="cancelClear">వద్దు</button>
+      <button class="confirm" id="confirmClear">తొలగించు</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
