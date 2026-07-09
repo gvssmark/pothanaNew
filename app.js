@@ -1,14 +1,13 @@
 /* =========================================================================
    పోతన తెలుగు భాగవతము — app.js
    ========================================================================= */
-// //https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?sheetid=1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs&sheetname=Sheet1
 
 /* -------------------------------------------------------------------------
    CONFIG — EDIT THESE THREE VALUES to point at your published Apps Script
    ------------------------------------------------------------------------- */
 const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec',
-  SHEET_ID: '1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID/exec',
+  SHEET_ID: 'PASTE_YOUR_GOOGLE_SHEET_ID',
   SHEET_NAME: 'Sheet1',              // the tab name inside the sheet
   SYNC_INTERVAL_DAYS: 7,             // auto re-sync if cached data is older than this
 };
@@ -22,6 +21,7 @@ const state = {
   totalCount: 0,
   currentId: 1,
   skandaIndex: [],   // [{num, text, firstId, ghattas:[{num, text, firstId}]}]
+  expanded: true,    // global: whether meaning (టీక) + bhavam are shown on every card
 };
 
 /* -------------------------------------------------------------------------
@@ -193,6 +193,10 @@ const clearBookmarkBtn = document.getElementById('clearBookmarkBtn');
 const confirmBackdrop = document.getElementById('confirmBackdrop');
 const cancelClear = document.getElementById('cancelClear');
 const confirmClear = document.getElementById('confirmClear');
+const aboutBtn = document.getElementById('aboutBtn');
+const aboutBackdrop = document.getElementById('aboutBackdrop');
+const closeAbout = document.getElementById('closeAbout');
+const aboutStats = document.getElementById('aboutStats');
 const toastEl = document.getElementById('toast');
 
 let toastTimer = null;
@@ -214,6 +218,19 @@ function escapeHtml(str) {
 
 function buildCardHTML(rec) {
   const chandassuTag = rec.chandassu ? ` <span class="chandassu">(${escapeHtml(rec.chandassu)})</span>` : '';
+  const meaningBlocks = state.expanded ? `
+      <div class="field field-meaning">
+        <div class="field-label">టీక</div>
+        <div class="field-text">${escapeHtml(rec.teeka)}</div>
+      </div>
+      <div class="field field-bhavam">
+        <div class="field-label">భావం</div>
+        <div class="field-text">${escapeHtml(rec.tippani)}</div>
+      </div>` : '';
+  const toggleLabel = state.expanded ? 'టీక, భావం దాచు ▲' : 'టీక, భావం చూపు ▼';
+  const prevDisabled = rec.id <= 1 ? 'disabled' : '';
+  const nextDisabled = rec.id >= state.totalCount ? 'disabled' : '';
+
   return `
     <div class="hole-bottom"></div>
     <div class="card-heading">
@@ -223,23 +240,19 @@ function buildCardHTML(rec) {
       <span class="sep">•</span>
       <span>${escapeHtml(rec.padyaSankhya)}</span>
     </div>
+    <div class="expand-toggle-row">
+      <button class="expand-toggle" onclick="toggleExpand()">${toggleLabel}</button>
+    </div>
     <div class="card-body">
       <div class="field field-padyam">
         <div class="field-label">పద్యం${chandassuTag}</div>
         <div class="field-text">${escapeHtml(rec.padyamText)}</div>
-      </div>
-      <div class="field field-meaning">
-        <div class="field-label">టీక</div>
-        <div class="field-text">${escapeHtml(rec.teeka)}</div>
-      </div>
-      <div class="field field-bhavam">
-        <div class="field-label">భావం</div>
-        <div class="field-text">${escapeHtml(rec.tippani)}</div>
-      </div>
+      </div>${meaningBlocks}
     </div>
     <div class="card-footer">
-      <span class="swipe-hint">↑ తదుపరి · ↓ వెనుకకు</span>
-      <span>${rec.id} / ${state.totalCount}</span>
+      <button class="nav-btn prev-btn" onclick="goPrev()" ${prevDisabled}>◀ వెనుకకు</button>
+      <span class="counter">${rec.id} / ${state.totalCount}</span>
+      <button class="nav-btn next-btn" onclick="goNext()" ${nextDisabled}>తదుపరి ▶</button>
     </div>
   `;
 }
@@ -465,6 +478,24 @@ window.addEventListener('keydown', (e) => {
 });
 
 /* -------------------------------------------------------------------------
+   GLOBAL NAV + EXPAND TOGGLE (exposed on window for inline onclick handlers,
+   since card markup is rebuilt via innerHTML on every navigation)
+   ------------------------------------------------------------------------- */
+window.goNext = function () {
+  if (state.currentId < state.totalCount) jumpTo(state.currentId + 1);
+};
+window.goPrev = function () {
+  if (state.currentId > 1) jumpTo(state.currentId - 1);
+};
+window.toggleExpand = function () {
+  state.expanded = !state.expanded;
+  if (state.db) dbSetMeta(state.db, 'expandState', state.expanded).catch(() => {});
+  // Refresh the visible card in place; the neighbor card (if any) is rebuilt
+  // fresh from state.expanded next time it's prepared, so no extra work needed.
+  activeEl.innerHTML = buildCardHTML(state.records[state.currentId - 1]);
+};
+
+/* -------------------------------------------------------------------------
    BOOKMARK
    ------------------------------------------------------------------------- */
 let bookmarkSaveTimer = null;
@@ -555,6 +586,19 @@ menuBtn.addEventListener('click', openDrawer);
 overlay.addEventListener('click', closeDrawer);
 
 /* -------------------------------------------------------------------------
+   ABOUT MODAL
+   ------------------------------------------------------------------------- */
+aboutBtn.addEventListener('click', () => {
+  aboutStats.textContent = `మొత్తం స్కంధాలు: ${state.skandaIndex.length} · మొత్తం పద్యాలు: ${state.totalCount}`;
+  aboutBackdrop.classList.add('show');
+  closeDrawer();
+});
+closeAbout.addEventListener('click', () => aboutBackdrop.classList.remove('show'));
+aboutBackdrop.addEventListener('click', (e) => {
+  if (e.target === aboutBackdrop) aboutBackdrop.classList.remove('show');
+});
+
+/* -------------------------------------------------------------------------
    SYNC
    ------------------------------------------------------------------------- */
 async function doFetchAndStore() {
@@ -641,6 +685,9 @@ async function init() {
     state.totalCount = records.length;
     buildSkandaIndex();
     renderDrawer();
+
+    const savedExpandState = await dbGetMeta(state.db, 'expandState');
+    if (typeof savedExpandState === 'boolean') state.expanded = savedExpandState;
 
     setupCardElements();
     const bookmark = await dbGetMeta(state.db, 'bookmarkId');

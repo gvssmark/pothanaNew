@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pothana-bhagavatham-v1';
+const CACHE_NAME = 'pothana-bhagavatham-v2';
 const APP_SHELL = [
   './',
   './index.html',

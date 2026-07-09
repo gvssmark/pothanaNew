@@ -59,7 +59,12 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/><line x1="4" y1="4" x2="20" y2="20"/></svg>
       గుర్తు తొలగించు
     </button>
+    <button class="menu-action" id="aboutBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      గురించి
+    </button>
     <div class="sync-status" id="syncStatus"></div>
+
   </div>
 </nav>
 
@@ -70,6 +75,29 @@
     <div class="confirm-actions">
       <button class="cancel" id="cancelClear">వద్దు</button>
       <button class="confirm" id="confirmClear">తొలగించు</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-backdrop" id="aboutBackdrop">
+  <div class="confirm-box about-box">
+    <h3>పోతన తెలుగు భాగవతము</h3>
+    <p>
+      మహాకవి బమ్మెర పోతన రచించిన తెలుగు భాగవతము నుండి పద్యం, టీక (తాత్పర్యం), భావం
+      ఒక్కొక్క కార్డుగా చదువుకోవడానికి రూపొందించిన అనువర్తనం ఇది.
+    </p>
+    <p>
+      మొత్తం 14 స్కంధాలుగా, ప్రతి స్కంధం అనేక ఘట్టాలుగా విభజించబడిన పద్యాలను
+      పైకి/కిందకి స్వైప్ చేస్తూ లేదా తదుపరి/వెనుకకు బటన్ల ద్వారా చదవవచ్చు.
+      హేమ్‌బర్గర్ మెనూ ద్వారా నేరుగా ఏ స్కంధం, ఘట్టానికైనా వెళ్లవచ్చు.
+    </p>
+    <p>
+      మీరు చదివిన స్థానం స్వయంచాలకంగా గుర్తు పెట్టబడి, యాప్ మళ్ళీ తెరిచినప్పుడు
+      అక్కడి నుండే కొనసాగుతుంది. ఇది ఆఫ్‌లైన్‌లో కూడా పనిచేసే PWA (Progressive Web App).
+    </p>
+    <p id="aboutStats" class="about-stats"></p>
+    <div class="confirm-actions">
+      <button class="cancel" id="closeAbout">మూసివేయి</button>
     </div>
   </div>
 </div>
