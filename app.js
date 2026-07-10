@@ -1,7 +1,7 @@
+//https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?sheetid=1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs&sheetname=Sheet1
 /* =========================================================================
    పోతన తెలుగు భాగవతము — app.js
    ========================================================================= */
-//https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?sheetid=1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs&sheetname=Sheet1
 
 /* -------------------------------------------------------------------------
    CONFIG — EDIT THESE THREE VALUES to point at your published Apps Script
@@ -222,17 +222,30 @@ function escapeHtml(str) {
   }[c]));
 }
 
+/* Normalizes every line-break variant that can end up in a spreadsheet cell
+   (\r\n, lone \r, and Unicode line/paragraph separators from pasted text)
+   into a single form, then renders explicit <br> tags. This avoids relying
+   on CSS white-space handling, which some mobile browser engines interpret
+   differently from desktop for these characters. */
+function formatMultiline(str) {
+  const normalized = (str || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[\u2028\u2029]/g, '\n');
+  return escapeHtml(normalized).split('\n').join('<br>');
+}
+
 function buildCardHTML(rec) {
   const chandassuTag = rec.chandassu ? ` <span class="chandassu">(${escapeHtml(rec.chandassu)})</span>` : '';
   const meaningBlock = state.showMeaning ? `
       <div class="field field-meaning">
         <div class="field-label">టీక</div>
-        <div class="field-text">${escapeHtml(rec.teeka)}</div>
+        <div class="field-text">${formatMultiline(rec.teeka)}</div>
       </div>` : '';
   const bhavamBlock = state.showBhavam ? `
       <div class="field field-bhavam">
         <div class="field-label">భావం</div>
-        <div class="field-text">${escapeHtml(rec.tippani)}</div>
+        <div class="field-text">${formatMultiline(rec.tippani)}</div>
       </div>` : '';
   const prevDisabled = rec.id <= 1 ? 'disabled' : '';
   const nextDisabled = rec.id >= state.totalCount ? 'disabled' : '';
@@ -249,7 +262,7 @@ function buildCardHTML(rec) {
     <div class="card-body">
       <div class="field field-padyam">
         <div class="field-label">పద్యం${chandassuTag}</div>
-        <div class="field-text">${escapeHtml(rec.padyamText)}</div>
+        <div class="field-text">${formatMultiline(rec.padyamText)}</div>
       </div>${meaningBlock}${bhavamBlock}
     </div>
     <div class="card-footer">
