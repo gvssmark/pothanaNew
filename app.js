@@ -8,7 +8,7 @@
    CONFIG — EDIT THESE THREE VALUES to point at your published Apps Script
    ------------------------------------------------------------------------- */
 const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?',
   SHEET_ID: '1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs',
   SHEET_NAME: 'Sheet1',              // the tab name inside the sheet
   SYNC_INTERVAL_DAYS: 7,             // auto re-sync if cached data is older than this
