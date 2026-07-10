@@ -1,5 +1,3 @@
-//https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec?sheetid=1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs&sheetname=Sheet1
-
 /* =========================================================================
    పోతన తెలుగు భాగవతము — app.js
    ========================================================================= */
@@ -8,8 +6,8 @@
    CONFIG — EDIT THESE THREE VALUES to point at your published Apps Script
    ------------------------------------------------------------------------- */
 const CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwo-TtPn3DAjHSPCXDwPFerT36QyfPPvUTi7uQEvcmjJso_aWpaKefUsgx_vpJOowHUgg/exec',
-  SHEET_ID: '1azp8o_KQvmWNLPeiRK75JBY2Hu8DMY7wJYoWX_1WdWs',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID/exec',
+  SHEET_ID: 'PASTE_YOUR_GOOGLE_SHEET_ID',
   SHEET_NAME: 'Sheet1',              // the tab name inside the sheet
   SYNC_INTERVAL_DAYS: 7,             // auto re-sync if cached data is older than this
 };
@@ -109,13 +107,8 @@ function dbDeleteMeta(db, key) {
 /* -------------------------------------------------------------------------
    FETCH + PARSE (Apps Script returns an array of arrays; row 0 is header)
    ------------------------------------------------------------------------- */
-async function fetchSheetData() {
-  const url = `${CONFIG.APPS_SCRIPT_URL}?sheetid=${encodeURIComponent(CONFIG.SHEET_ID)}&sheetname=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error('నెట్‌వర్క్ లోపం: ' + res.status);
-  const rows = await res.json();
+function parseSheetRows(rows) {
   if (!Array.isArray(rows) || rows.length < 2) throw new Error('డేటా ఆకృతి తప్పు');
-
   const records = [];
   let idCounter = 0;
   for (let i = 1; i < rows.length; i++) {
@@ -137,6 +130,42 @@ async function fetchSheetData() {
     });
   }
   return records;
+}
+
+async function fetchSheetData() {
+  const url = `${CONFIG.APPS_SCRIPT_URL}?sheetid=${encodeURIComponent(CONFIG.SHEET_ID)}&sheetname=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error('నెట్‌వర్క్ లోపం: ' + res.status);
+  const rows = await res.json();
+  return parseSheetRows(rows);
+}
+
+/* Bundled data.json, shipped alongside the app in the same repo/folder.
+   Accepts EITHER shape:
+   - an array of raw sheet rows (array of arrays, header row included), or
+   - an array of already-parsed record objects (e.g. exported straight from
+     IndexedDB with export-data-snippet.js).
+   Throws if the file doesn't exist or isn't recognized, so callers can fall
+   back to the live Apps Script endpoint. */
+async function loadBundledData() {
+  const res = await fetch('./data.json', { cache: 'no-store' });
+  if (!res.ok) throw new Error('data.json not found');
+  const json = await res.json();
+  if (!Array.isArray(json) || json.length === 0) throw new Error('data.json is empty');
+  if (Array.isArray(json[0])) return parseSheetRows(json);
+  if (typeof json[0] === 'object' && 'padyamText' in json[0]) return json;
+  throw new Error('data.json format not recognized');
+}
+
+/* Tries the bundled static file first (works fully offline, no Google
+   dependency), and only falls back to the live Apps Script sheet if that
+   file is missing or unreadable. */
+async function fetchAllData() {
+  try {
+    return await loadBundledData();
+  } catch (err) {
+    return await fetchSheetData();
+  }
 }
 
 /* -------------------------------------------------------------------------
@@ -652,7 +681,7 @@ aboutBackdrop.addEventListener('click', (e) => {
    SYNC
    ------------------------------------------------------------------------- */
 async function doFetchAndStore() {
-  const fresh = await fetchSheetData();
+  const fresh = await fetchAllData();
   await dbClear(state.db, 'padyams');
   await dbPutAll(state.db, 'padyams', fresh);
   await dbSetMeta(state.db, 'lastSynced', Date.now());
